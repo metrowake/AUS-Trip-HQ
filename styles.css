@@ -84,7 +84,7 @@ body{
 .muted{color:var(--mut);margin:0}
 
 .card{
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
   border:1px solid var(--line);
   border-radius:var(--r);
   padding:14px;
@@ -343,6 +343,24 @@ body{
   filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
 }
 
+.wx{
+  background:
+    radial-gradient(600px 240px at 20% 0%, rgba(0,212,255,.12), transparent 60%);
+  border-radius:16px;
+  padding:10px;
+}
+
+.pill{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+}
+
+#timePill{
+  border-color: color-mix(in oklab, var(--a1) 40%, var(--line));
+}
+.h-title{
+  text-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
 
 
 
