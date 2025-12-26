@@ -1,11 +1,12 @@
-/* app.js — Australia Trip Companion */
-const COVERS = {
-  hotel_sydney: "https://i.natgeofe.com/n/5c32242b-830e-449b-8e27-88f242ebbeb4/sydney-travel_16x9.jpg?w=1200",
-  hotel_perth: "https://www.australiangeographic.com.au/wp-content/uploads/2018/06/Puan-orangutan2_credit-Alex-Asbury.jpg",
-  hotel_goldcoast: "https://i.imgur.com/f55hVAS.jpeg",
-  hotel_hamilton: "https://i.natgeofe.com/n/ce61e163-64b5-4b64-b703-15c92f594cac/whitsunday-islands-australia.jpg",
-  // Brisbane: lo decidiamo dopo
-};
+/* app.js — Australia Trip Companion
+   Versione “finale corretta” basata sul tuo file attuale.
+
+   Fix principali:
+   - Rimosso COVERS con URL esterni (copyright). Ora cover = astratta via dataset (data-city).
+   - setBase(): tolta duplicazione getGPSBase() + chiamate cover incoerenti.
+   - Meteo: aggiunta icona (#wxIcon) in modo sicuro (se l’elemento non c’è, non rompe).
+   - Map: lasciata com’è (anche se in futuro vuoi rimuoverla, ti dico dove).
+*/
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -13,7 +14,7 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const state = {
   view: "home",
   base: "gps",
-  baseCoord: null, // {lat, lon, label}
+  baseCoord: null, // {lat, lon, label, tz}
   mode: "nearby",  // nearby | suggested | saved
   radiusKm: 5,
   region: "all",
@@ -26,31 +27,30 @@ const state = {
 
 const BASES = {
   gps: { label: "GPS", lat: null, lon: null, tz: null },
-  hotel_sydney:   { label: "Sydney — Shangri-La", lat: -33.8601, lon: 151.2066, tz: "Australia/Sydney" },
-  hotel_goldcoast:{ label: "Gold Coast — Langham", lat: -28.0306, lon: 153.4328, tz: "Australia/Brisbane" },
-  hotel_hamilton: { label: "Hamilton Island — The Sundays", lat: -20.3484, lon: 148.9560, tz: "Australia/Brisbane" },
-  hotel_perth:    { label: "Perth — Ritz-Carlton", lat: -31.9530, lon: 115.8575, tz: "Australia/Perth" }
+  hotel_sydney:    { label: "Sydney — Shangri-La",            lat: -33.8601, lon: 151.2066, tz: "Australia/Sydney" },
+  hotel_goldcoast: { label: "Gold Coast — Langham",           lat: -28.0306, lon: 153.4328, tz: "Australia/Brisbane" },
+  hotel_hamilton:  { label: "Hamilton Island — The Sundays",  lat: -20.3484, lon: 148.9560, tz: "Australia/Brisbane" },
+  hotel_perth:     { label: "Perth — Ritz-Carlton",           lat: -31.9530, lon: 115.8575, tz: "Australia/Perth" }
 };
+
+/* ===== COVER (astratta, NO copyright) ===== */
 function setCoverForBase(baseKey){
   const el = document.getElementById("cityCover");
   if(!el) return;
 
-  // default se GPS o sconosciuto
   let city = "sydney";
 
   if(baseKey && baseKey.startsWith("hotel_")){
     city = baseKey.replace("hotel_", "");
   } else if(baseKey === "gps"){
-    // se vuoi: deduci dal timezone quando disponibile
     const tz = state.baseCoord?.tz;
     if(tz === "Australia/Perth") city = "perth";
-    else if(tz === "Australia/Brisbane") city = "goldcoast"; // (QLD)
+    else if(tz === "Australia/Brisbane") city = "goldcoast"; // QLD
     else city = "sydney";
   }
 
   el.dataset.city = city;
 }
-
 
 function init() {
   wireNav();
@@ -121,11 +121,13 @@ function wireAround(){
   const sheet = $("#sheet");
   const handle = $("#sheetHandle");
   let startY = null, startH = null;
+
   handle.addEventListener("touchstart", (e) => {
     const t = e.touches[0];
     startY = t.clientY;
     startH = sheet.getBoundingClientRect().height;
   }, {passive:true});
+
   handle.addEventListener("touchmove", (e) => {
     if(startY == null) return;
     const t = e.touches[0];
@@ -133,6 +135,7 @@ function wireAround(){
     const newH = Math.max(160, Math.min(window.innerHeight*0.80, startH + dy));
     sheet.style.maxHeight = newH + "px";
   }, {passive:true});
+
   handle.addEventListener("touchend", () => { startY = null; startH = null; }, {passive:true});
 }
 
@@ -162,24 +165,24 @@ function setGreeting(){
   $("#greeting").textContent = g;
 }
 
+/* ===== BASE ===== */
 async function setBase(baseKey, refreshWxNow){
   state.base = baseKey;
-  setCoverForBase(baseKey); // ✅ QUI
-if(baseKey === "gps"){
-  $("#wherePill").textContent = "Dove: GPS";
-  await getGPSBase();
-  setCoverForBase(coverKeyFromTZ(state.baseCoord?.tz)); // ✅ QUI
-  await getGPSBase();
-setCoverForBase("gps");
-}
- else {
+
+  if(baseKey === "gps"){
+    $("#wherePill").textContent = "Dove: GPS";
+    await getGPSBase();
+    setCoverForBase("gps"); // dopo GPS, con tz calcolato
+  } else {
     const b = BASES[baseKey];
     state.baseCoord = { lat: b.lat, lon: b.lon, label: b.label, tz: b.tz };
     $("#wherePill").textContent = "Dove: " + b.label;
     setLocalTimePill(b.tz);
+    setCoverForBase(baseKey);
   }
 
   if(refreshWxNow) refreshWeather();
+
   if(state.view === "around"){
     ensureMap();
     centerOnBase(false);
@@ -190,7 +193,14 @@ setCoverForBase("gps");
 function setLocalTimePill(tz){
   try{
     const now = new Date();
-    const fmt = new Intl.DateTimeFormat("it-IT", { timeZone: tz, hour: "2-digit", minute:"2-digit", weekday:"short", day:"2-digit", month:"short" });
+    const fmt = new Intl.DateTimeFormat("it-IT", {
+      timeZone: tz,
+      hour: "2-digit",
+      minute:"2-digit",
+      weekday:"short",
+      day:"2-digit",
+      month:"short"
+    });
     $("#timePill").textContent = "Ora locale: " + fmt.format(now);
   }catch(_){
     $("#timePill").textContent = "Ora locale: —";
@@ -199,7 +209,12 @@ function setLocalTimePill(tz){
 
 async function getGPSBase(){
   // fallback: Sydney
-  state.baseCoord = { lat: -33.8601, lon: 151.2066, label:"GPS (fallback Sydney)", tz:"Australia/Sydney" };
+  state.baseCoord = {
+    lat: -33.8601,
+    lon: 151.2066,
+    label:"GPS (fallback Sydney)",
+    tz:"Australia/Sydney"
+  };
 
   if(!navigator.geolocation){
     setLocalTimePill("Australia/Sydney");
@@ -211,9 +226,10 @@ async function getGPSBase(){
       (pos) => {
         const {latitude, longitude} = pos.coords;
         state.lastPos = {lat: latitude, lon: longitude};
-        // timezone: pick best guess by longitude (simple)
+
         const tz = guessAUS_TZ(longitude);
         state.baseCoord = { lat: latitude, lon: longitude, label:"GPS", tz };
+
         $("#wherePill").textContent = "Dove: GPS";
         setLocalTimePill(tz);
         resolve();
@@ -228,15 +244,12 @@ async function getGPSBase(){
 }
 
 function guessAUS_TZ(lon){
-  // super pragmatic:
-  // Perth ~115E (AWST), East ~151E (AEST/AEDT). Brisbane no DST, Sydney DST in summer.
-  // We won't be perfect, but enough for "Ora locale".
   if(lon < 129) return "Australia/Perth";
-  if(lon < 141) return "Australia/Darwin"; // not used much here
-  // choose Sydney as default east
+  if(lon < 141) return "Australia/Darwin";
   return "Australia/Sydney";
 }
 
+/* ===== MAP ===== */
 function ensureMap(){
   if(state.map) return;
   state.map = L.map("map", { zoomControl:true, preferCanvas:true });
@@ -282,6 +295,7 @@ function refreshAround(){
     if(state.region !== "all" && p.region !== state.region) return false;
     if(state.category !== "all" && p.category !== state.category) return false;
     if(state.radiusKm !== 999 && p.distKm > state.radiusKm) return false;
+
     if(state.q){
       const hay = (p.name+" "+(p.what||"")+" "+(p.why||"")+" "+(p.tips||"")+" "+(p.keywords||[]).join(" ")).toLowerCase();
       if(!hay.includes(state.q)) return false;
@@ -294,7 +308,6 @@ function refreshAround(){
   if(state.mode === "nearby"){
     list = filtered.sort((a,b)=>a.distKm-b.distKm);
   } else if(state.mode === "suggested"){
-    // “consigliati”: combinazione semplice = distanza + ora (preferisci mattina/sera per view/beach)
     const hour = new Date().getHours();
     list = filtered.map(p => {
       let bonus = 0;
@@ -373,7 +386,6 @@ function renderCards(list){
     });
 
     el.addEventListener("click", (ev) => {
-      // click only if not on buttons
       if(ev.target.tagName.toLowerCase() === "button") return;
       state.map.setView([p.lat,p.lon], 15);
     });
@@ -405,12 +417,12 @@ async function refreshWeather(){
   const tz = c.tz || "Australia/Sydney";
   setLocalTimePill(tz);
 
-  $("#wxUpdated").textContent = "Aggiornamento…";
-  $("#wxTemp").textContent = "—";
-  $("#wxDesc").textContent = "—";
-  $("#wxRain").textContent = "—";
-  $("#wxWind").textContent = "—";
-  $("#wxMinMax").textContent = "—";
+  safeSet("#wxUpdated", "Aggiornamento…");
+  safeSet("#wxTemp", "—");
+  safeSet("#wxDesc", "—");
+  safeSet("#wxRain", "—");
+  safeSet("#wxWind", "—");
+  safeSet("#wxMinMax", "—");
 
   try{
     const url =
@@ -426,28 +438,49 @@ async function refreshWeather(){
     const rain = j?.current?.precipitation;
     const wind = j?.current?.wind_speed_10m;
     const code = j?.current?.weather_code;
-    $("#wxIcon").textContent = weatherIcon(code);
+
+    // icona (se l'elemento non esiste, non crasha)
+    safeSet("#wxIcon", weatherIcon(code));
+
     const max = j?.daily?.temperature_2m_max?.[0];
     const min = j?.daily?.temperature_2m_min?.[0];
     const prSum = j?.daily?.precipitation_sum?.[0];
 
-    $("#wxTemp").textContent = (t!=null ? Math.round(t) + "°" : "—");
-    $("#wxDesc").textContent = weatherLabel(code);
-    $("#wxRain").textContent = (rain!=null ? `${rain} mm/h` : "—") + (prSum!=null ? ` • oggi ${prSum}mm` : "");
-    $("#wxWind").textContent = (wind!=null ? `${Math.round(wind)} km/h` : "—");
-    $("#wxMinMax").textContent = (max!=null && min!=null) ? `${Math.round(max)}° / ${Math.round(min)}°` : "—";
-    $("#wxUpdated").textContent = "Ora (base selezionata)";
-
-    $("#wearTip").textContent = wearTip({t, wind, rain: prSum ?? rain});
-  }catch(e){
-    $("#wxUpdated").textContent = "Meteo non disponibile (rete/permessi).";
-    $("#wearTip").textContent = "Layer leggero + SPF + acqua. Se vento: aggiungi una felpa.";
+    safeSet("#wxTemp", (t!=null ? Math.round(t) + "°" : "—"));
+    safeSet("#wxDesc", weatherLabel(code));
+    safeSet("#wxRain", (rain!=null ? `${rain} mm/h` : "—") + (prSum!=null ? ` • oggi ${prSum}mm` : ""));
+    safeSet("#wxWind", (wind!=null ? `${Math.round(wind)} km/h` : "—"));
+    safeSet("#wxMinMax", (max!=null && min!=null) ? `${Math.round(max)}° / ${Math.round(min)}°` : "—");
+    safeSet("#wxUpdated", "Ora (base selezionata)");
+    safeSet("#wearTip", wearTip({t, wind, rain: prSum ?? rain}));
+  }catch(_){
+    safeSet("#wxUpdated", "Meteo non disponibile (rete/permessi).");
+    safeSet("#wearTip", "Layer leggero + SPF + acqua. Se vento: aggiungi una felpa.");
   }
+}
+
+function safeSet(sel, txt){
+  const el = $(sel);
+  if(el) el.textContent = txt;
+}
+
+function weatherLabel(code){
+  const m = {
+    0:"Sereno", 1:"Quasi sereno", 2:"Parzialmente nuvoloso", 3:"Nuvoloso",
+    45:"Nebbia", 48:"Nebbia",
+    51:"Pioviggine",53:"Pioviggine",55:"Pioviggine",
+    61:"Pioggia",63:"Pioggia",65:"Pioggia forte",
+    71:"Neve",73:"Neve",75:"Neve forte",
+    80:"Rovesci",81:"Rovesci",82:"Rovesci forti",
+    95:"Temporale"
+  };
+  return m[code] || "Variabile";
 }
 
 function weatherIcon(code){
   if(code === 0) return "☀️";
-  if(code <= 2) return "🌤️";
+  if(code === 1) return "🌤️";
+  if(code === 2) return "⛅";
   if(code === 3) return "☁️";
   if(code >= 45 && code <= 48) return "🌫️";
   if(code >= 51 && code <= 57) return "🌦️";
@@ -457,7 +490,6 @@ function weatherIcon(code){
   if(code === 95) return "⛈️";
   return "🌡️";
 }
-
 
 function wearTip({t, wind, rain}){
   let out = [];
@@ -484,51 +516,56 @@ async function loadTrip(){
 
     // flights
     const fRoot = $("#flightList");
-    fRoot.innerHTML = "";
-    t.flights.forEach(x => {
-      const div = document.createElement("div");
-      div.className = "rowline";
-      div.innerHTML = `<div class="k">${x.date} • ${x.flight}</div><div class="v">${x.from} → ${x.to}</div><div class="s">${x.dep} → ${x.arr}</div>`;
-      fRoot.appendChild(div);
-    });
+    if(fRoot){
+      fRoot.innerHTML = "";
+      t.flights.forEach(x => {
+        const div = document.createElement("div");
+        div.className = "rowline";
+        div.innerHTML = `<div class="k">${x.date} • ${x.flight}</div><div class="v">${x.from} → ${x.to}</div><div class="s">${x.dep} → ${x.arr}</div>`;
+        fRoot.appendChild(div);
+      });
+    }
 
     // hotels
     const hRoot = $("#stayList");
-    hRoot.innerHTML = "";
-    t.hotels.forEach(x => {
-      const div = document.createElement("div");
-      div.className = "rowline";
-      div.innerHTML = `<div class="k">${x.city} • ${x.nights} notti</div><div class="v">${x.name}</div><div class="s">${x.checkIn} → ${x.checkOut}</div>`;
-      hRoot.appendChild(div);
-    });
+    if(hRoot){
+      hRoot.innerHTML = "";
+      t.hotels.forEach(x => {
+        const div = document.createElement("div");
+        div.className = "rowline";
+        div.innerHTML = `<div class="k">${x.city} • ${x.nights} notti</div><div class="v">${x.name}</div><div class="s">${x.checkIn} → ${x.checkOut}</div>`;
+        hRoot.appendChild(div);
+      });
+    }
 
     // car
     const cRoot = $("#carBox");
-    cRoot.innerHTML = "";
-    const c = t.car;
-    [
-      {k:"Noleggio", v:`${c.vendor} • ${c.vehicle}`},
-      {k:"Ritiro", v:c.pickup},
-      {k:"Rilascio", v:c.dropoff},
-      {k:"Note", v:c.notes}
-    ].forEach(x => {
-      const div = document.createElement("div");
-      div.className = "rowline";
-      div.innerHTML = `<div class="k">${x.k}</div><div class="v">${x.v}</div>`;
-      cRoot.appendChild(div);
-    });
+    if(cRoot){
+      cRoot.innerHTML = "";
+      const c = t.car;
+      [
+        {k:"Noleggio", v:`${c.vendor} • ${c.vehicle}`},
+        {k:"Ritiro", v:c.pickup},
+        {k:"Rilascio", v:c.dropoff},
+        {k:"Note", v:c.notes}
+      ].forEach(x => {
+        const div = document.createElement("div");
+        div.className = "rowline";
+        div.innerHTML = `<div class="k">${x.k}</div><div class="v">${x.v}</div>`;
+        cRoot.appendChild(div);
+      });
+    }
 
     // moves
     const mRoot = $("#moveList");
-    mRoot.innerHTML = "";
-    t.moves.forEach(s => {
-      const li = document.createElement("li");
-      li.textContent = s;
-      mRoot.appendChild(li);
-    });
-
-    // keep bases aligned
-    // (already in BASES)
+    if(mRoot){
+      mRoot.innerHTML = "";
+      t.moves.forEach(s => {
+        const li = document.createElement("li");
+        li.textContent = s;
+        mRoot.appendChild(li);
+      });
+    }
   }catch(_){}
 }
 
@@ -537,6 +574,8 @@ async function loadItinerary(){
     const r = await fetch("./itinerary.json", {cache:"no-store"});
     const data = await r.json();
     const root = $("#itineraryList");
+    if(!root) return;
+
     root.innerHTML = "";
 
     data.days.forEach((d, idx) => {
@@ -571,9 +610,11 @@ async function loadItinerary(){
   }catch(_){}
 }
 
-/* ===== HOME OCCASIONS (light, safe) ===== */
+/* ===== HOME OCCASIONS ===== */
 function renderOccasions(){
   const ul = $("#occasionList");
+  if(!ul) return;
+
   ul.innerHTML = "";
 
   const items = [
@@ -592,6 +633,8 @@ function renderOccasions(){
 
 function paintChecklist(){
   const ul = $("#dailyChecklist");
+  if(!ul) return;
+
   ul.innerHTML = "";
   [
     "SPF + cappello + acqua",
@@ -607,13 +650,3 @@ function paintChecklist(){
 }
 
 window.addEventListener("load", init);
-function coverKeyFromTZ(tz){
-  if(tz === "Australia/Perth") return "hotel_perth";
-  // Brisbane timezone copre Gold Coast + Hamilton
-  if(tz === "Australia/Brisbane") return "hotel_goldcoast";
-  // default East (Sydney)
-  return "hotel_sydney";
-}
-
-
-
