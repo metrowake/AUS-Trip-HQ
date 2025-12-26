@@ -362,5 +362,57 @@ body{
   text-shadow: 0 10px 30px rgba(0,0,0,.45);
 }
 
+.cover{
+  height: 160px;
+  border-radius: 22px;
+  margin: 6px 0 12px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  background:
+    radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.18), transparent 60%),
+    radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.14), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.12), rgba(15,15,18,.86));
+}
+/* SYDNEY — ocean + neon city */
+.cover[data-city="sydney"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(0,212,255,.38), transparent 60%),
+    radial-gradient(900px 360px at 85% 25%, rgba(124,58,237,.20), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* PERTH — sunset + sand */
+.cover[data-city="perth"]{
+  background:
+    radial-gradient(900px 360px at 20% 18%, rgba(251,113,133,.34), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(245,158,11,.20), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* BRISBANE — river + subtropical */
+.cover[data-city="brisbane"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(34,197,94,.26), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(0,212,255,.20), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* GOLD COAST — teal + surf */
+.cover[data-city="goldcoast"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(0,212,255,.34), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(16,185,129,.18), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* HAMILTON — tropical + lagoon */
+.cover[data-city="hamilton"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(16,185,129,.26), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(0,212,255,.22), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
 
 
