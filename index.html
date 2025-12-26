@@ -134,64 +134,88 @@
         </div>
       </section>
 
-      <!-- AROUND -->
-      <section class="view" id="view-around" data-view="around" hidden>
-        <div class="map-wrap">
-          <div id="map" class="map"></div>
+      <!-- AROUND (NO MAP) -->
+<section class="view" id="view-around" data-view="around" hidden>
+  <div class="page">
+    <div class="page-head">
+      <h2>Around Me</h2>
+      <p class="muted" id="aroundSubtitle">Posti vicini alla base selezionata.</p>
+    </div>
 
-          <div class="sheet" id="sheet">
-            <div class="sheet-handle" id="sheetHandle"></div>
+    <!-- TOP PICKS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Top picks</div>
+        <div class="card-sub" id="topPicksSub">Consigliati ora • 5–8 idee</div>
+      </div>
+      <div class="top-picks" id="topPicks"></div>
+    </div>
 
-            <div class="sheet-top">
-              <div class="sheet-title">Around Me</div>
-              <div class="sheet-sub" id="sheetSub">Mappa protagonista • card utili • filtri semplici</div>
-            </div>
+    <div class="divider"></div>
 
-            <div class="filters">
-              <div class="segmented" role="tablist" aria-label="Modalità filtro">
-                <button class="seg on" data-mode="nearby" role="tab" aria-selected="true">Vicini</button>
-                <button class="seg" data-mode="suggested" role="tab" aria-selected="false">Consigliati</button>
-                <button class="seg" data-mode="saved" role="tab" aria-selected="false">Salvati</button>
-              </div>
+    <!-- FILTERS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Filtri</div>
+        <div class="card-sub">Raggio, area, categoria, ricerca</div>
+      </div>
 
-              <div class="filter-row">
-                <select id="regionSelect" class="select">
-                  <option value="all">Tutte le aree</option>
-                  <option value="Sydney">Sydney</option>
-                  <option value="Gold Coast">Gold Coast</option>
-                  <option value="Hamilton Island">Hamilton Island</option>
-                  <option value="Perth">Perth</option>
-                </select>
-
-                <select id="radiusSelect" class="select">
-                  <option value="2">2 km</option>
-                  <option value="5" selected>5 km</option>
-                  <option value="15">15 km</option>
-                  <option value="999">Tutto</option>
-                </select>
-
-                <select id="catSelect" class="select">
-                  <option value="all">Categorie</option>
-                  <option value="food">Food</option>
-                  <option value="beach">Beach</option>
-                  <option value="nature">Nature</option>
-                  <option value="view">View</option>
-                  <option value="culture">Culture</option>
-                  <option value="shop">Shop</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div class="filter-row">
-                <input id="searchInput" class="input" placeholder="Cerca (nome o keyword)..." />
-                <button class="btn ghost" id="btnClear">Pulisci</button>
-              </div>
-            </div>
-
-            <div class="cards" id="cards"></div>
-          </div>
+      <div class="filters">
+        <div class="segmented" role="tablist" aria-label="Modalità filtro">
+          <button class="seg on" data-mode="nearby" role="tab" aria-selected="true">Vicini</button>
+          <button class="seg" data-mode="suggested" role="tab" aria-selected="false">Consigliati</button>
+          <button class="seg" data-mode="saved" role="tab" aria-selected="false">Salvati</button>
         </div>
-      </section>
+
+        <div class="filter-row">
+          <select id="regionSelect" class="select">
+            <option value="all">Tutte le aree</option>
+            <option value="Sydney">Sydney</option>
+            <option value="Gold Coast">Gold Coast</option>
+            <option value="Hamilton Island">Hamilton Island</option>
+            <option value="Perth">Perth</option>
+          </select>
+
+          <select id="radiusSelect" class="select">
+            <option value="2">2 km</option>
+            <option value="5" selected>5 km</option>
+            <option value="15">15 km</option>
+            <option value="999">Tutto</option>
+          </select>
+
+          <select id="catSelect" class="select">
+            <option value="all">Categorie</option>
+            <option value="food">Food</option>
+            <option value="beach">Beach</option>
+            <option value="nature">Nature</option>
+            <option value="view">View</option>
+            <option value="culture">Culture</option>
+            <option value="shop">Shop</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="filter-row">
+          <input id="searchInput" class="input" placeholder="Cerca (nome o keyword)..." />
+          <button class="btn ghost" id="btnClear">Pulisci</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- GROUPED RESULTS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Risultati</div>
+        <div class="card-sub" id="resultsSub">Raggruppati per categoria</div>
+      </div>
+
+      <div class="groups" id="groups"></div>
+    </div>
+  </div>
+</section>
+
 
       <!-- TRIP -->
       <section class="view" id="view-trip" data-view="trip" hidden>
@@ -402,3 +426,4 @@
   </script>
 </body>
 </html>
+
