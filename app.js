@@ -77,20 +77,21 @@ function go(view){
   $$(".view").forEach(v => v.hidden = (v.dataset.view !== view));
 
   if(view === "around"){
-    ensureMap();
-    setTimeout(() => state.map.invalidateSize(), 200);
-    refreshAround();
-  }
+  refreshAround();
+}
+
 }
 
 function wireHome(){
   $("#btnOpenAround").addEventListener("click", () => go("around"));
   $("#btnRefreshWx").addEventListener("click", () => refreshWeather());
   $("#baseSelect").addEventListener("change", (e) => setBase(e.target.value, true));
-  $("#btnLocate").addEventListener("click", () => {
-    if(state.view !== "around") go("around");
-    centerOnBase(true);
-  });
+  $("#btnLocate").addEventListener("click", async () => {
+  await setBase("gps", true);
+  if(state.view !== "around") go("around");
+  refreshAround();
+});
+
 }
 
 function wireAround(){
@@ -279,13 +280,13 @@ function haversineKm(a, b){
 }
 
 function refreshAround(){
-  if(!state.map) return;
+  const base = state.baseCoord || {lat:-33.8601, lon:151.2066, label:"Sydney", tz:"Australia/Sydney"};
 
-  // clear markers
-  state.markers.forEach(m => m.remove());
-  state.markers = [];
+  // subtitle
+  if($("#aroundSubtitle")){
+    $("#aroundSubtitle").textContent = `Posti vicini a: ${base.label || "base"} • raggio ${state.radiusKm === 999 ? "tutto" : (state.radiusKm + " km")}`;
+  }
 
-  const base = state.baseCoord || {lat:-33.8601, lon:151.2066};
   const all = (window.PLACES || []).map(p => {
     const d = haversineKm({lat:base.lat, lon:base.lon}, {lat:p.lat, lon:p.lon});
     return {...p, distKm: d};
@@ -303,17 +304,18 @@ function refreshAround(){
     return true;
   });
 
-  let list = filtered;
+  let list = filtered.slice();
 
   if(state.mode === "nearby"){
-    list = filtered.sort((a,b)=>a.distKm-b.distKm);
+    list.sort((a,b)=>a.distKm-b.distKm);
   } else if(state.mode === "suggested"){
     const hour = new Date().getHours();
     list = filtered.map(p => {
       let bonus = 0;
-      if(p.category === "view" && (hour >= 16 || hour <= 9)) bonus += 1.2;
+      if(p.category === "view" && (hour >= 16 || hour <= 10)) bonus += 1.2;
       if(p.category === "food" && (hour >= 11 && hour <= 14)) bonus += 0.8;
       if(p.category === "beach" && (hour >= 9 && hour <= 17)) bonus += 0.6;
+      if(p.category === "culture" && (hour >= 10 && hour <= 17)) bonus += 0.5;
       return {...p, score: bonus - (p.distKm/10)};
     }).sort((a,b)=> (b.score - a.score));
   } else if(state.mode === "saved"){
@@ -322,77 +324,194 @@ function refreshAround(){
     list.sort((a,b)=>a.distKm-b.distKm);
   }
 
-  // markers
-  list.forEach(p => {
-    const m = L.marker([p.lat,p.lon]).addTo(state.map);
-    m.bindPopup(`<b>${escapeHtml(p.name)}</b><br/>${escapeHtml(p.what||"")}`);
-    state.markers.push(m);
-  });
-
-  renderCards(list);
+  renderTopPicks(list);
+  renderGrouped(list);
 }
 
-function renderCards(list){
-  const root = $("#cards");
+function renderTopPicks(list){
+  const root = $("#topPicks");
+  if(!root) return;
   root.innerHTML = "";
 
   if(list.length === 0){
-    const div = document.createElement("div");
-    div.className = "poi";
-    div.innerHTML = `<div class="poi-title">Nessun risultato</div><div class="poi-why">Prova ad allargare il raggio o togliere filtri.</div>`;
-    root.appendChild(div);
+    root.innerHTML = `<div class="muted">Nessun risultato con questi filtri.</div>`;
+    if($("#topPicksSub")) $("#topPicksSub").textContent = "Prova ad allargare raggio o togliere filtri";
     return;
   }
 
   const saved = getSaved();
+  const picks = list.slice(0, Math.min(8, list.length));
 
-  list.slice(0, 60).forEach(p => {
+  if($("#topPicksSub")){
+    $("#topPicksSub").textContent = `Top ${picks.length} • ${state.mode === "suggested" ? "scelti per orario + distanza" : "i più vicini"}`;
+  }
+
+  picks.forEach(p => {
     const el = document.createElement("div");
-    el.className = "poi";
+    el.className = "pick";
 
-    const badges = [
-      `<span class="badge">${escapeHtml(p.region)}</span>`,
-      `<span class="badge muted">${escapeHtml(p.category)}</span>`,
-      `<span class="badge">${p.distKm < 10 ? p.distKm.toFixed(1) : Math.round(p.distKm)} km</span>`
-    ].join("");
+    const km = p.distKm < 10 ? p.distKm.toFixed(1) : Math.round(p.distKm);
+    const cost = estimateCostEUR(p);
 
     el.innerHTML = `
-      <div class="poi-top">
-        <div>
-          <div class="poi-title">${escapeHtml(p.name)}</div>
-          <div class="poi-meta">
-            <span>${escapeHtml(p.what||"")}</span>
-          </div>
-        </div>
-        <div class="poi-badges">${badges}</div>
+      <div class="t">${escapeHtml(p.name)}</div>
+      <div class="m">
+        <span class="badge">${escapeHtml(p.region)}</span>
+        <span class="badge muted">${escapeHtml(p.category)}</span>
+        <span class="badge">${km} km</span>
+        <span class="cost">€ ${escapeHtml(cost)}</span>
       </div>
-      <div class="poi-why"><b>Perché andarci:</b> ${escapeHtml(p.why||"—")}</div>
-      <div class="poi-meta"><span><b>Tip:</b> ${escapeHtml(p.tips||"—")}</span></div>
-      <div class="poi-actions">
-        <button class="btn" data-act="nav">Naviga</button>
+      <div class="poi-why" style="margin-top:8px">
+        ${escapeHtml(p.what || p.why || "Posto interessante vicino a te.")}
+      </div>
+      <div class="a">
+        <button class="btn" data-act="maps">Maps</button>
         <button class="btn ghost" data-act="save">${saved.has(p.id) ? "Salvato" : "Salva"}</button>
       </div>
     `;
 
-    el.querySelector('[data-act="nav"]').addEventListener("click", () => {
-      const url = `https://www.google.com/maps?q=${encodeURIComponent(p.lat + "," + p.lon)}`;
-      window.open(url, "_blank");
-    });
-
+    el.querySelector('[data-act="maps"]').addEventListener("click", () => openInGoogleMaps(p));
     el.querySelector('[data-act="save"]').addEventListener("click", (e) => {
       toggleSaved(p.id);
       e.target.textContent = getSaved().has(p.id) ? "Salvato" : "Salva";
       if(state.mode === "saved") refreshAround();
     });
 
-    el.addEventListener("click", (ev) => {
-      if(ev.target.tagName.toLowerCase() === "button") return;
-      state.map.setView([p.lat,p.lon], 15);
-    });
-
     root.appendChild(el);
   });
 }
+
+function renderGrouped(list){
+  const root = $("#groups");
+  if(!root) return;
+  root.innerHTML = "";
+
+  if(list.length === 0){
+    root.innerHTML = `<div class="muted">Nessun risultato. Prova ad allargare il raggio o togliere filtri.</div>`;
+    if($("#resultsSub")) $("#resultsSub").textContent = "0 risultati";
+    return;
+  }
+
+  const saved = getSaved();
+  if($("#resultsSub")) $("#resultsSub").textContent = `${list.length} risultati • raggruppati per categoria`;
+
+  // ordine categorie “umano”
+  const ORDER = ["food","beach","nature","view","culture","shop","other"];
+  const labelCat = (c) => ({
+    food:"Food",
+    beach:"Beach",
+    nature:"Nature",
+    view:"View",
+    culture:"Culture",
+    shop:"Shop",
+    other:"Other"
+  }[c] || c);
+
+  // group by category
+  const groups = new Map();
+  list.forEach(p => {
+    const k = p.category || "other";
+    if(!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(p);
+  });
+
+  ORDER.filter(k => groups.has(k)).forEach(cat => {
+    const items = groups.get(cat).slice().sort((a,b)=>a.distKm-b.distKm);
+
+    const g = document.createElement("div");
+    g.className = "group";
+    g.setAttribute("aria-expanded", "true");
+
+    const head = document.createElement("div");
+    head.className = "group-h";
+    head.innerHTML = `
+      <div>
+        <div class="group-title">${labelCat(cat)}</div>
+        <div class="group-sub">Vicini alla base • apri/chiudi</div>
+      </div>
+      <div class="group-count">${items.length}</div>
+    `;
+
+    head.addEventListener("click", () => {
+      const isOpen = g.getAttribute("aria-expanded") === "true";
+      g.setAttribute("aria-expanded", isOpen ? "false" : "true");
+    });
+
+    const body = document.createElement("div");
+    body.className = "group-body";
+
+    items.forEach(p => {
+      const el = document.createElement("div");
+      el.className = "poi";
+
+      const km = p.distKm < 10 ? p.distKm.toFixed(1) : Math.round(p.distKm);
+      const cost = estimateCostEUR(p);
+
+      el.innerHTML = `
+        <div class="poi-top">
+          <div>
+            <div class="poi-title">${escapeHtml(p.name)}</div>
+            <div class="poi-line2">
+              <span class="badge">${escapeHtml(p.region)}</span>
+              <span class="badge muted">${escapeHtml(p.category)}</span>
+              <span class="badge">${km} km</span>
+              <span class="cost">€ ${escapeHtml(cost)}</span>
+            </div>
+          </div>
+          <div class="poi-badges">
+            <span class="badge">${saved.has(p.id) ? "★ Salvato" : " "}</span>
+          </div>
+        </div>
+
+        <div class="poi-why"><b>Descrizione:</b> ${escapeHtml(p.what || "—")}</div>
+        <div class="poi-why"><b>Perché andarci:</b> ${escapeHtml(p.why || "—")}</div>
+        <div class="poi-meta"><span><b>Tip:</b> ${escapeHtml(p.tips || "—")}</span></div>
+
+        <div class="poi-actions">
+          <button class="btn" data-act="maps">Apri Maps</button>
+          <button class="btn ghost" data-act="save">${saved.has(p.id) ? "Salvato" : "Salva"}</button>
+        </div>
+      `;
+
+      el.querySelector('[data-act="maps"]').addEventListener("click", () => openInGoogleMaps(p));
+      el.querySelector('[data-act="save"]').addEventListener("click", (e) => {
+        toggleSaved(p.id);
+        e.target.textContent = getSaved().has(p.id) ? "Salvato" : "Salva";
+        if(state.mode === "saved") refreshAround();
+      });
+
+      body.appendChild(el);
+    });
+
+    g.appendChild(head);
+    g.appendChild(body);
+    root.appendChild(g);
+  });
+}
+
+function openInGoogleMaps(p){
+  const label = p.name ? `(${p.name})` : "";
+  const url = `https://www.google.com/maps?q=${encodeURIComponent(p.lat + "," + p.lon + " " + label)}`;
+  window.open(url, "_blank");
+}
+
+/* costo stimato “pragmatico”, poi lo affineremo per posto */
+function estimateCostEUR(p){
+  // se in futuro aggiungi p.cost, lo rispettiamo
+  if(p.cost && typeof p.cost === "string") return p.cost;
+
+  const cat = (p.category || "other").toLowerCase();
+
+  // range indicativi per turista (ingresso/consumo minimo)
+  if(cat === "beach" || cat === "view") return "0–10";
+  if(cat === "nature") return "0–25";
+  if(cat === "culture") return "10–35";
+  if(cat === "shop") return "0–60";
+  if(cat === "food") return "15–45";
+
+  return "0–30";
+}
+
 
 function getSaved(){
   try{
@@ -650,3 +769,4 @@ function paintChecklist(){
 }
 
 window.addEventListener("load", init);
+
