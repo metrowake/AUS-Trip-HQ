@@ -1,0 +1,76 @@
+{
+  "party": {
+    "pax": ["GB","AB","SGB","GF","CN","IS"]
+  },
+  "hotels": [
+    {
+      "city":"Sydney",
+      "name":"Shangri-La Sydney",
+      "checkIn":"2025-12-29",
+      "checkOut":"2026-01-03",
+      "nights":5,
+      "address":"176 Cumberland Street, Sydney NSW 2000",
+      "baseKey":"hotel_sydney",
+      "lat":-33.8601,
+      "lon":151.2066
+    },
+    {
+      "city":"Gold Coast",
+      "name":"The Langham Gold Coast",
+      "checkIn":"2026-01-04",
+      "checkOut":"2026-01-08",
+      "nights":4,
+      "address":"38 Old Burleigh Road, Gold Coast QLD 4217",
+      "baseKey":"hotel_goldcoast",
+      "lat":-28.0306,
+      "lon":153.4328
+    },
+    {
+      "city":"Hamilton Island",
+      "name":"The Sundays",
+      "checkIn":"2026-01-08",
+      "checkOut":"2026-01-12",
+      "nights":4,
+      "address":"10 Palm Terrace Way, Hamilton Island QLD 4803",
+      "baseKey":"hotel_hamilton",
+      "lat":-20.3484,
+      "lon":148.9560
+    },
+    {
+      "city":"Perth",
+      "name":"The Ritz-Carlton Perth",
+      "checkIn":"2026-01-12",
+      "checkOut":"2026-01-16",
+      "nights":4,
+      "address":"1 Barrack Street, Perth WA 6000",
+      "baseKey":"hotel_perth",
+      "lat":-31.9530,
+      "lon":115.8575
+    }
+  ],
+  "flights": [
+    {"date":"2025-12-27","from":"FCO","to":"DXB","flight":"EK 96","dep":"20:50","arr":"+1 05:30"},
+    {"date":"2025-12-28","from":"DXB","to":"SYD","flight":"EK 412","dep":"10:15","arr":"+1 07:00"},
+    {"date":"2026-01-08","from":"BNE","to":"HTI","flight":"QF 1592","dep":"12:05","arr":"13:50"},
+    {"date":"2026-01-12","from":"HTI","to":"SYD","flight":"QF 579","dep":"11:55","arr":"15:15"},
+    {"date":"2026-01-12","from":"SYD","to":"PER","flight":"QF 651","dep":"16:10","arr":"18:00"},
+    {"date":"2026-01-16","from":"PER","to":"DXB","flight":"EK 421","dep":"22:20","arr":"+1 05:25"},
+    {"date":"2026-01-17","from":"DXB","to":"FCO","flight":"EK 97","dep":"08:55","arr":"12:40"}
+  ],
+  "car": {
+    "vendor":"Hertz",
+    "pickup":"Sydney (03 Jan 2026 11:00)",
+    "dropoff":"Gold Coast OOL Airport (08 Jan 2026 17:00)",
+    "vehicle":"Mazda CX-9 o similare",
+    "notes":"Guida a sinistra. Limiti e controlli rigidi."
+  },
+  "moves": [
+    "29 Dic → Arrivo Sydney, check-in hotel",
+    "03 Gen → Ritiro auto (Sydney)",
+    "03–04 Gen → Drive Sydney → Gold Coast",
+    "08 Gen → Volo BNE → Hamilton Island, check-in",
+    "12 Gen → Volo HTI → SYD → PER, check-in Perth",
+    "16 Gen → Partenza PER (sera)",
+    "17 Gen → Arrivo Roma"
+  ]
+}

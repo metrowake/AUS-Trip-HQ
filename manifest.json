@@ -1,0 +1,9 @@
+{
+  "name": "Australia Trip Companion",
+  "short_name": "AustraliaTrip",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0F0F12",
+  "theme_color": "#0F0F12",
+  "icons": []
+}

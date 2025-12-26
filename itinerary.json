@@ -1,0 +1,224 @@
+{
+  "days": [
+    {
+      "date":"2025-12-29",
+      "title":"Sydney — atterraggio & reset",
+      "focus":"Jet lag management + porto",
+      "bullets":[
+        "Passeggiata leggera: Circular Quay → Opera House",
+        "Cena easy: cucina semplice, rientro presto",
+        "Obiettivo: esposizione luce diurna per ri-settare il sonno"
+      ],
+      "culture":"Gli australiani cenano prima e fanno vita outdoor: adattati al ritmo."
+    },
+    {
+      "date":"2025-12-30",
+      "title":"Sydney — classic icons",
+      "focus":"Harbour + quartieri",
+      "bullets":[
+        "Opera House / The Rocks (storico)",
+        "Harbour Bridge lookout o walk sul pedestrian path",
+        "Tramonto vista porto"
+      ],
+      "culture":"Rispetto delle file e tono calmo: credibilità immediata."
+    },
+    {
+      "date":"2025-12-31",
+      "title":"Sydney — giornata flessibile",
+      "focus":"Brunch + beach vibe",
+      "bullets":[
+        "Bondi o Coastal Walk (anche solo tratto breve)",
+        "Brunch serio (qui è un rito)",
+        "Sera: scegli in base a energia e folla"
+      ],
+      "culture":"Il sole è un tema vero: SPF e acqua sempre."
+    },
+    {
+      "date":"2026-01-01",
+      "title":"Sydney — slow day",
+      "focus":"Recupero + panorami",
+      "bullets":[
+        "Kings Cross / Darling Harbour / museo a scelta",
+        "Passeggiata in zona verde",
+        "Cena rilassata"
+      ],
+      "culture":"La città è molto “sport & parks”."
+    },
+    {
+      "date":"2026-01-02",
+      "title":"Sydney — ultimo giorno",
+      "focus":"Shopping leggero + planning drive",
+      "bullets":[
+        "Mattina: quartiere a scelta + coffee",
+        "Pomeriggio: prepara drive (acqua, snack, playlist)",
+        "Sera: valigie pronte"
+      ],
+      "culture":"Pragmatismo: si pianifica per margini e non per “speranza”."
+    },
+    {
+      "date":"2026-01-03",
+      "title":"Drive day — Sydney → (sosta) → Gold Coast",
+      "focus":"Roadtrip intelligente",
+      "bullets":[
+        "Ritiro auto (11:00), check carburante e documenti",
+        "Soste every 2–3 ore: caffè + bagno + stretch",
+        "Arrivo area Gold Coast (notte di transito se necessaria)"
+      ],
+      "culture":"Le distanze non sono europee: margine mentale e orari realistici."
+    },
+    {
+      "date":"2026-01-04",
+      "title":"Gold Coast — check-in Langham",
+      "focus":"Mare + chill",
+      "bullets":[
+        "Check-in e spiaggia vicino hotel",
+        "Passeggiata soft al tramonto",
+        "Cena: early dinner, riposo"
+      ],
+      "culture":"Beach etiquette: nuota tra le bandiere."
+    },
+    {
+      "date":"2026-01-05",
+      "title":"Gold Coast — Burleigh vibe",
+      "focus":"Nature + lookout",
+      "bullets":[
+        "Burleigh Head National Park: trail facile",
+        "Pranzo easy",
+        "Pomeriggio mare"
+      ],
+      "culture":"Lifestyle outdoor: camminata breve vale più di 10 piani."
+    },
+    {
+      "date":"2026-01-06",
+      "title":"Gold Coast — giornata libera",
+      "focus":"A scelta",
+      "bullets":[
+        "Surfers Paradise o zona più tranquilla",
+        "Shopping leggero / mercatini se disponibili",
+        "Sera: programma logistica del volo"
+      ],
+      "culture":"Non serve “fare tutto”: scegli 2 cose e falle bene."
+    },
+    {
+      "date":"2026-01-07",
+      "title":"Gold Coast — ultimo giorno",
+      "focus":"Packing + mare breve",
+      "bullets":[
+        "Mattina: bagno e sole (con cervello)",
+        "Pomeriggio: ricariche / documenti / valigie",
+        "Sera: dormire presto"
+      ],
+      "culture":"La disciplina sul sonno migliora tutto il viaggio."
+    },
+    {
+      "date":"2026-01-08",
+      "title":"Volo → Hamilton Island",
+      "focus":"BNE → HTI + check-in The Sundays",
+      "bullets":[
+        "Volo QF1592, arrivo e transfer incluso",
+        "Relax spiaggia Catseye",
+        "Sunset: One Tree Hill"
+      ],
+      "culture":"Qui il tempo si misura in tramonti e mare: rallenta davvero."
+    },
+    {
+      "date":"2026-01-09",
+      "title":"Whitsundays — mare",
+      "focus":"Snorkel / boat day",
+      "bullets":[
+        "Giornata acqua: tour o snorkel",
+        "Pausa lunga, idratazione",
+        "Sera easy"
+      ],
+      "culture":"“No worries” = stile di vita. Non correre."
+    },
+    {
+      "date":"2026-01-10",
+      "title":"Hamilton — slow luxury",
+      "focus":"Riposo attivo",
+      "bullets":[
+        "Mattina: passeggiata breve",
+        "Pomeriggio: mare / spa / lettura",
+        "Tramonto vista"
+      ],
+      "culture":"Il vero lusso qui è la calma, non l’agenda piena."
+    },
+    {
+      "date":"2026-01-11",
+      "title":"Hamilton — ultimo giorno",
+      "focus":"Chiusura isola",
+      "bullets":[
+        "Ultimo mare",
+        "Packing smart",
+        "Cena presto"
+      ],
+      "culture":"Preparare il giorno dopo = serenità."
+    },
+    {
+      "date":"2026-01-12",
+      "title":"Volo → Perth",
+      "focus":"HTI → SYD → PER + check-in Ritz",
+      "bullets":[
+        "Giornata trasferimenti, snack e acqua",
+        "Arrivo Perth: cena semplice vicino hotel",
+        "Dormire bene"
+      ],
+      "culture":"Perth è più “pulita e calma”, ventosa la sera: porta uno strato."
+    },
+    {
+      "date":"2026-01-13",
+      "title":"Perth — skyline & park",
+      "focus":"Kings Park",
+      "bullets":[
+        "Kings Park lookout",
+        "Centro: passeggiata",
+        "Tramonto se c’è vento: felpa leggera"
+      ],
+      "culture":"Qui si vive molto all’aperto anche in città."
+    },
+    {
+      "date":"2026-01-14",
+      "title":"Perth — Fremantle day",
+      "focus":"Quartiere portuale",
+      "bullets":[
+        "Fremantle: coffee + streets",
+        "Mercati se aperti",
+        "Cena: seafood o casual"
+      ],
+      "culture":"La gente è diretta ma cordiale. Poche parole, sorriso, via."
+    },
+    {
+      "date":"2026-01-15",
+      "title":"Perth — ultimo giorno",
+      "focus":"Chiusura & shopping",
+      "bullets":[
+        "Mattina rilassata",
+        "Regali/souvenir, logistica volo serale",
+        "Valigie pronte"
+      ],
+      "culture":"L’efficienza batte la foga."
+    },
+    {
+      "date":"2026-01-16",
+      "title":"Rientro — PER → DXB",
+      "focus":"Partenza serale",
+      "bullets":[
+        "Check-out e ultimi dettagli",
+        "Aeroporto con anticipo",
+        "Volo EK421"
+      ],
+      "culture":"Viaggiare comodi = zero stress (acqua, snack, powerbank)."
+    },
+    {
+      "date":"2026-01-17",
+      "title":"Rientro — DXB → Roma",
+      "focus":"Arrivo a casa",
+      "bullets":[
+        "Volo EK97",
+        "Reset sonno graduale",
+        "Backup foto e note viaggio"
+      ],
+      "culture":"Fine: ora hai materiale per ricordarti tutto senza fatica."
+    }
+  ]
+}

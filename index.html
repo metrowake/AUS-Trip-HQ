@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Australia Trip Companion</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0F0F12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-title">Australia Trip</div>
+        <div class="brand-sub" id="brandSub">Companion PWA</div>
+      </div>
+      <div class="top-actions">
+        <button class="iconbtn" id="btnLocate" title="Centra su di me" aria-label="Centra su di me">⦿</button>
+      </div>
+    </header>
+
+    <main class="main" id="main">
+      <!-- HOME -->
+      <section class="view" id="view-home" data-view="home">
+        <div class="hero">
+          <div class="hero-left">
+            <div class="h-eyebrow" id="greeting">Buongiorno</div>
+            <h1 class="h-title">Oggi in Australia</h1>
+            <div class="h-meta">
+              <div class="pill" id="wherePill">Dove: —</div>
+              <div class="pill" id="timePill">Ora locale: —</div>
+              <div class="pill" id="seasonPill">Stagione: Estate</div>
+            </div>
+          </div>
+
+          <div class="hero-right card">
+            <div class="card-head">
+              <div class="card-title">Meteo (base selezionata)</div>
+              <div class="card-sub" id="wxUpdated">—</div>
+            </div>
+
+            <div class="wx">
+              <div class="wx-main">
+                <div class="wx-temp" id="wxTemp">—</div>
+                <div class="wx-desc" id="wxDesc">—</div>
+              </div>
+
+              <div class="wx-kpis">
+                <div class="kpi"><div class="kpi-k">Pioggia</div><div class="kpi-v" id="wxRain">—</div></div>
+                <div class="kpi"><div class="kpi-k">Vento</div><div class="kpi-v" id="wxWind">—</div></div>
+                <div class="kpi"><div class="kpi-k">Max/Min</div><div class="kpi-v" id="wxMinMax">—</div></div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="tip">
+              <div class="tip-title">Come vestirsi</div>
+              <div class="tip-body" id="wearTip">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Ricorrenze & note locali</div>
+              <div class="card-sub">Promemoria utili (no “news”)</div>
+            </div>
+            <ul class="list" id="occasionList"></ul>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Scelte rapide</div>
+              <div class="card-sub">GPS oppure uno degli hotel</div>
+            </div>
+
+            <div class="quick">
+              <label class="label">Base</label>
+              <select id="baseSelect" class="select">
+                <option value="gps">GPS (dove sono adesso)</option>
+                <option value="hotel_sydney">Hotel — Sydney (Shangri-La)</option>
+                <option value="hotel_goldcoast">Hotel — Gold Coast (Langham)</option>
+                <option value="hotel_hamilton">Hotel — Hamilton Island (The Sundays)</option>
+                <option value="hotel_perth">Hotel — Perth (Ritz-Carlton)</option>
+              </select>
+
+              <div class="row">
+                <button class="btn" id="btnOpenAround">Apri Around Me</button>
+                <button class="btn ghost" id="btnRefreshWx">Aggiorna meteo</button>
+              </div>
+
+              <div class="mini">
+                <div class="mini-title">Regola d’oro</div>
+                <div class="mini-body">
+                  Estate australiana: UV alto anche con nuvole. SPF, cappello, acqua. Sempre.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AROUND -->
+      <section class="view" id="view-around" data-view="around" hidden>
+        <div class="map-wrap">
+          <div id="map" class="map"></div>
+
+          <div class="sheet" id="sheet">
+            <div class="sheet-handle" id="sheetHandle"></div>
+
+            <div class="sheet-top">
+              <div class="sheet-title">Around Me</div>
+              <div class="sheet-sub" id="sheetSub">Mappa protagonista • card utili • filtri semplici</div>
+            </div>
+
+            <div class="filters">
+              <div class="segmented" role="tablist" aria-label="Modalità filtro">
+                <button class="seg on" data-mode="nearby" role="tab" aria-selected="true">Vicini</button>
+                <button class="seg" data-mode="suggested" role="tab" aria-selected="false">Consigliati</button>
+                <button class="seg" data-mode="saved" role="tab" aria-selected="false">Salvati</button>
+              </div>
+
+              <div class="filter-row">
+                <select id="regionSelect" class="select">
+                  <option value="all">Tutte le aree</option>
+                  <option value="Sydney">Sydney</option>
+                  <option value="Gold Coast">Gold Coast</option>
+                  <option value="Hamilton Island">Hamilton Island</option>
+                  <option value="Perth">Perth</option>
+                </select>
+
+                <select id="radiusSelect" class="select">
+                  <option value="2">2 km</option>
+                  <option value="5" selected>5 km</option>
+                  <option value="15">15 km</option>
+                  <option value="999">Tutto</option>
+                </select>
+
+                <select id="catSelect" class="select">
+                  <option value="all">Categorie</option>
+                  <option value="food">Food</option>
+                  <option value="beach">Beach</option>
+                  <option value="nature">Nature</option>
+                  <option value="view">View</option>
+                  <option value="culture">Culture</option>
+                  <option value="shop">Shop</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="filter-row">
+                <input id="searchInput" class="input" placeholder="Cerca (nome o keyword)..." />
+                <button class="btn ghost" id="btnClear">Pulisci</button>
+              </div>
+            </div>
+
+            <div class="cards" id="cards"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRIP -->
+      <section class="view" id="view-trip" data-view="trip" hidden>
+        <div class="page">
+          <div class="page-head">
+            <h2>Info di viaggio</h2>
+            <p class="muted">Voli, hotel, auto e spostamenti.</p>
+          </div>
+
+          <div class="grid2">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Voli</div>
+                <div class="card-sub">Orari locali</div>
+              </div>
+              <div id="flightList" class="rows"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Hotel</div>
+                <div class="card-sub">Check-in / check-out + notti</div>
+              </div>
+              <div id="stayList" class="rows"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Auto</div>
+                <div class="card-sub">Noleggio & tratto Sydney → Gold Coast</div>
+              </div>
+              <div id="carBox" class="rows"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Spostamenti (macro)</div>
+                <div class="card-sub">Timeline sintetica</div>
+              </div>
+              <ul class="list" id="moveList"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OPS -->
+      <section class="view" id="view-ops" data-view="ops" hidden>
+        <div class="page">
+          <div class="page-head">
+            <h2>Operativo</h2>
+            <p class="muted">Numeri utili, regole e checklist.</p>
+          </div>
+
+          <div class="grid2">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Emergenze</div>
+                <div class="card-sub">Da ricordare</div>
+              </div>
+              <ul class="list">
+                <li><b>000</b> — emergenze (polizia/ambulanza/pompieri)</li>
+                <li><b>112</b> — spesso instrada verso 000</li>
+                <li><b>13 11 26</b> — Poisons Information Centre</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Guida & strada</div>
+                <div class="card-sub">Due righe che salvano</div>
+              </div>
+              <ul class="list">
+                <li>Guida <b>a sinistra</b>. Rotatorie: attenzione corsie e frecce.</li>
+                <li>Limiti e telecamere: rispettali, multe rapide.</li>
+                <li>Animali al crepuscolo fuori città: prudenza.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Sole & mare</div>
+                <div class="card-sub">Il rischio #1 del turista</div>
+              </div>
+              <ul class="list">
+                <li>SPF alto + riapplicazione. Cappello. Acqua. Non negoziabile.</li>
+                <li>Nuota tra le bandiere dove c’è il bagnino.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Checklist giornaliera</div>
+                <div class="card-sub">5 cose al mattino</div>
+              </div>
+              <ul class="list" id="dailyChecklist"></ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Link rapidi</div>
+                <div class="card-sub">Aprono app di sistema</div>
+              </div>
+              <div class="rows">
+                <button class="btn" id="btnOpenMaps">Apri Maps</button>
+                <button class="btn ghost" id="btnShare">Condividi app</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ITINERARY -->
+      <section class="view" id="view-itinerary" data-view="itinerary" hidden>
+        <div class="page">
+          <div class="page-head">
+            <h2>Itinerario</h2>
+            <p class="muted">Giorno per giorno, con idee sensate e cultura “da viaggio”.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Timeline</div>
+              <div class="card-sub">Tocca un giorno per espandere</div>
+            </div>
+            <div id="itineraryList" class="timeline"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MOOD -->
+      <section class="view" id="view-mood" data-view="mood" hidden>
+        <div class="page">
+          <div class="page-head">
+            <h2>Mood Australia</h2>
+            <p class="muted">Cultura, società, mentalità, slang.</p>
+          </div>
+
+          <div class="grid2">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Mentalità</div>
+                <div class="card-sub">Pragmatica, diretta, rilassata</div>
+              </div>
+              <ul class="list">
+                <li><b>No worries</b>: modo di dire reale (va tutto bene).</li>
+                <li>Stile “straight”: poche parole, fatti, rispetto del tempo.</li>
+                <li>Outdoor life: mare, parchi, sport, brunch.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Caffè & brunch</div>
+                <div class="card-sub">Qui il coffee è una cultura</div>
+              </div>
+              <ul class="list">
+                <li>Flat white / long black: ordini rapidi, qualità alta.</li>
+                <li>Brunch fortissimo: spesso il pasto “social”.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Geografia utile</div>
+                <div class="card-sub">Distanze vere</div>
+              </div>
+              <ul class="list">
+                <li>Costa est: più umida; Perth: più secca/ventosa.</li>
+                <li>Estate: UV alto, temporali locali.</li>
+                <li>Le distanze “mentono”: pianifica sempre margine.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Slang</div>
+                <div class="card-sub">Piccolo glossario</div>
+              </div>
+              <ul class="list">
+                <li><b>Arvo</b> = afternoon</li>
+                <li><b>Brekkie</b> = breakfast</li>
+                <li><b>Mate</b> = amico / colloquiale</li>
+                <li><b>Servo</b> = benzinaio</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="nav">
+      <button class="navbtn on" data-go="home">Home</button>
+      <button class="navbtn" data-go="around">Around</button>
+      <button class="navbtn" data-go="trip">Viaggio</button>
+      <button class="navbtn" data-go="ops">Operativo</button>
+      <button class="navbtn" data-go="itinerary">Itinerario</button>
+      <button class="navbtn" data-go="mood">Mood</button>
+    </nav>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="places.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
+  </script>
+</body>
+</html>
