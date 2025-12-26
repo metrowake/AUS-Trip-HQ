@@ -331,6 +331,18 @@ body{
   background-size: cover;
   overflow: hidden;
 }
+.wx-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.wx-icon{
+  font-size:32px;
+  line-height:1;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
+}
+
 
 
 
