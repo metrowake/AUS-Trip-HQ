@@ -29,91 +29,108 @@
     </header>
 
     <main class="main" id="main">
+
       <!-- HOME -->
       <section class="view" id="view-home" data-view="home">
-        cover" id="cityCover" aria-hidden="true"></div>
-        hero">
-          hero-left">
-            h-eyebrow" id="greeting">Buongiorno</div>
-            <h1 class="h-title">Oggi in Australia</h1>
-            h-meta">
-              pill" id="wherePill">Dove: —</div>
-              pill" id="timePill">Ora locale: —</div>
-              pill" id="seasonPill">Stagione: Estate</div>
-            </div>
-          </div>
+        <div class="page">
 
-          hero-right card">
-            card-head">
-              card-title">Meteo (base selezionata)</div>
-              <div class="card-sub" id="wxUpdated">—</div>
-            </div>
+          <!-- COVER (astratta, cambia con base) -->
+          <div class="cover" id="cityCover" aria-hidden="true"></div>
 
-            <div class="wx">
-              <div class="wx-main">
-  <div class="wx-left">
-    <div class="wx-icon" id="wxIcon">☀️</div>
-    <div>
-      <div class="wx-temp" id="wxTemp">—</div>
-      <div class="wx-desc" id="wxDesc">—</div>
-    </div>
-  </div>
-</div>
+          <div class="hero">
+            <div class="hero-left">
+              <div class="h-eyebrow" id="greeting">Buongiorno</div>
+              <h1 class="h-title">Oggi in Australia</h1>
 
-              <div class="wx-kpis">
-                <div class="kpi"><div class="kpi-k">Pioggia</div><div class="kpi-v" id="wxRain">—</div></div>
-                <div class="kpi"><div class="kpi-k">Vento</div><div class="kpi-v" id="wxWind">—</div></div>
-                <div class="kpi"><div class="kpi-k">Max/Min</div><div class="kpi-v" id="wxMinMax">—</div></div>
+              <div class="h-meta">
+                <div class="pill" id="wherePill">Dove: —</div>
+                <div class="pill" id="timePill">Ora locale: —</div>
+                <div class="pill" id="seasonPill">Stagione: Estate</div>
               </div>
             </div>
 
-            <div class="divider"></div>
-
-            <div class="tip">
-              <div class="tip-title">Come vestirsi</div>
-              <div class="tip-body" id="wearTip">—</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid2">
-          <div class="card">
-            <div class="card-head">
-              <div class="card-title">Ricorrenze & note locali</div>
-              <div class="card-sub">Promemoria utili (no “news”)</div>
-            </div>
-            <ul class="list" id="occasionList"></ul>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <div class="card-title">Scelte rapide</div>
-              <div class="card-sub">GPS oppure uno degli hotel</div>
-            </div>
-
-            <div class="quick">
-              <label class="label">Base</label>
-              <select id="baseSelect" class="select">
-                <option value="gps">GPS (dove sono adesso)</option>
-                <option value="hotel_sydney">Hotel — Sydney (Shangri-La)</option>
-                <option value="hotel_goldcoast">Hotel — Gold Coast (Langham)</option>
-                <option value="hotel_hamilton">Hotel — Hamilton Island (The Sundays)</option>
-                <option value="hotel_perth">Hotel — Perth (Ritz-Carlton)</option>
-              </select>
-
-              <div class="row">
-                <button class="btn" id="btnOpenAround">Apri Around Me</button>
-                <button class="btn ghost" id="btnRefreshWx">Aggiorna meteo</button>
+            <div class="hero-right card">
+              <div class="card-head">
+                <div class="card-title">Meteo (base selezionata)</div>
+                <div class="card-sub" id="wxUpdated">—</div>
               </div>
 
-              <div class="mini">
-                <div class="mini-title">Regola d’oro</div>
-                <div class="mini-body">
-                  Estate australiana: UV alto anche con nuvole. SPF, cappello, acqua. Sempre.
+              <div class="wx">
+                <div class="wx-main">
+                  <div class="wx-left">
+                    <div class="wx-icon" id="wxIcon" aria-hidden="true">☀️</div>
+                    <div>
+                      <div class="wx-temp" id="wxTemp">—</div>
+                      <div class="wx-desc" id="wxDesc">—</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="wx-kpis">
+                  <div class="kpi">
+                    <div class="kpi-k">Pioggia</div>
+                    <div class="kpi-v" id="wxRain">—</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi-k">Vento</div>
+                    <div class="kpi-v" id="wxWind">—</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi-k">Max/Min</div>
+                    <div class="kpi-v" id="wxMinMax">—</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="tip">
+                <div class="tip-title">Come vestirsi</div>
+                <div class="tip-body" id="wearTip">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Ricorrenze & note locali</div>
+                <div class="card-sub">Promemoria utili (no “news”)</div>
+              </div>
+              <ul class="list" id="occasionList"></ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Scelte rapide</div>
+                <div class="card-sub">GPS oppure uno degli hotel</div>
+              </div>
+
+              <div class="quick">
+                <label class="label" for="baseSelect">Base</label>
+                <select id="baseSelect" class="select">
+                  <option value="gps">GPS (dove sono adesso)</option>
+                  <option value="hotel_sydney">Hotel — Sydney (Shangri-La)</option>
+                  <option value="hotel_goldcoast">Hotel — Gold Coast (Langham)</option>
+                  <option value="hotel_hamilton">Hotel — Hamilton Island (The Sundays)</option>
+                  <option value="hotel_perth">Hotel — Perth (Ritz-Carlton)</option>
+                </select>
+
+                <div class="row">
+                  <button class="btn" id="btnOpenAround">Apri Around Me</button>
+                  <button class="btn ghost" id="btnRefreshWx">Aggiorna meteo</button>
+                </div>
+
+                <div class="mini">
+                  <div class="mini-title">Regola d’oro</div>
+                  <div class="mini-body">
+                    Estate australiana: UV alto anche con nuvole. SPF, cappello, acqua. Sempre.
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -363,6 +380,7 @@
           </div>
         </div>
       </section>
+
     </main>
 
     <nav class="nav">
@@ -384,5 +402,3 @@
   </script>
 </body>
 </html>
-
-
