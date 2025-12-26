@@ -1,4 +1,11 @@
 /* app.js — Australia Trip Companion */
+const COVERS = {
+  hotel_sydney: "https://i.natgeofe.com/n/5c32242b-830e-449b-8e27-88f242ebbeb4/sydney-travel_16x9.jpg?w=1200",
+  hotel_perth: "https://www.australiangeographic.com.au/wp-content/uploads/2018/06/Puan-orangutan2_credit-Alex-Asbury.jpg",
+  hotel_goldcoast: "https://i.imgur.com/f55hVAS.jpeg",
+  hotel_hamilton: "https://i.natgeofe.com/n/ce61e163-64b5-4b64-b703-15c92f594cac/whitsunday-islands-australia.jpg",
+  // Brisbane: lo decidiamo dopo
+};
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -24,6 +31,25 @@ const BASES = {
   hotel_hamilton: { label: "Hamilton Island — The Sundays", lat: -20.3484, lon: 148.9560, tz: "Australia/Brisbane" },
   hotel_perth:    { label: "Perth — Ritz-Carlton", lat: -31.9530, lon: 115.8575, tz: "Australia/Perth" }
 };
+function setCoverForBase(baseKey){
+  const el = document.getElementById("cityCover");
+  if(!el) return;
+
+  const url = COVERS[baseKey];
+  if(url){
+    el.style.backgroundImage =
+      `radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.22), transparent 55%),
+       radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.18), transparent 58%),
+       linear-gradient(180deg, rgba(15,15,18,.18), rgba(15,15,18,.86)),
+       url("${url}")`;
+  }else{
+    // fallback solo gradient (comunque bello)
+    el.style.backgroundImage =
+      `radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.22), transparent 55%),
+       radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.18), transparent 58%),
+       linear-gradient(180deg, rgba(15,15,18,.18), rgba(15,15,18,.86))`;
+  }
+}
 
 function init() {
   wireNav();
@@ -137,11 +163,13 @@ function setGreeting(){
 
 async function setBase(baseKey, refreshWxNow){
   state.base = baseKey;
-
-  if(baseKey === "gps"){
-    $("#wherePill").textContent = "Dove: GPS";
-    await getGPSBase();
-  } else {
+  setCoverForBase(baseKey); // ✅ QUI
+if(baseKey === "gps"){
+  $("#wherePill").textContent = "Dove: GPS";
+  await getGPSBase();
+  setCoverForBase(coverKeyFromTZ(state.baseCoord?.tz)); // ✅ QUI
+}
+ else {
     const b = BASES[baseKey];
     state.baseCoord = { lat: b.lat, lon: b.lon, label: b.label, tz: b.tz };
     $("#wherePill").textContent = "Dove: " + b.label;
@@ -574,3 +602,11 @@ function paintChecklist(){
 }
 
 window.addEventListener("load", init);
+function coverKeyFromTZ(tz){
+  if(tz === "Australia/Perth") return "hotel_perth";
+  // Brisbane timezone copre Gold Coast + Hamilton
+  if(tz === "Australia/Brisbane") return "hotel_goldcoast";
+  // default East (Sydney)
+  return "hotel_sydney";
+}
+
