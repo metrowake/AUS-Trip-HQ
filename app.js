@@ -423,6 +423,7 @@ async function refreshWeather(){
     const rain = j?.current?.precipitation;
     const wind = j?.current?.wind_speed_10m;
     const code = j?.current?.weather_code;
+    $("#wxIcon").textContent = weatherIcon(code);
     const max = j?.daily?.temperature_2m_max?.[0];
     const min = j?.daily?.temperature_2m_min?.[0];
     const prSum = j?.daily?.precipitation_sum?.[0];
@@ -441,18 +442,19 @@ async function refreshWeather(){
   }
 }
 
-function weatherLabel(code){
-  const m = {
-    0:"Sereno", 1:"Quasi sereno", 2:"Parzialmente nuvoloso", 3:"Nuvoloso",
-    45:"Nebbia", 48:"Nebbia",
-    51:"Pioviggine",53:"Pioviggine",55:"Pioviggine",
-    61:"Pioggia",63:"Pioggia",65:"Pioggia forte",
-    71:"Neve",73:"Neve",75:"Neve forte",
-    80:"Rovesci",81:"Rovesci",82:"Rovesci forti",
-    95:"Temporale"
-  };
-  return m[code] || "Variabile";
+function weatherIcon(code){
+  if(code === 0) return "☀️";
+  if(code <= 2) return "🌤️";
+  if(code === 3) return "☁️";
+  if(code >= 45 && code <= 48) return "🌫️";
+  if(code >= 51 && code <= 57) return "🌦️";
+  if(code >= 61 && code <= 65) return "🌧️";
+  if(code >= 71 && code <= 77) return "❄️";
+  if(code >= 80 && code <= 82) return "🌧️";
+  if(code === 95) return "⛈️";
+  return "🌡️";
 }
+
 
 function wearTip({t, wind, rain}){
   let out = [];
@@ -609,4 +611,5 @@ function coverKeyFromTZ(tz){
   // default East (Sydney)
   return "hotel_sydney";
 }
+
 
