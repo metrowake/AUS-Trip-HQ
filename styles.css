@@ -1,40 +1,69 @@
+/* =========================
+   TOKENS
+   ========================= */
 :root{
-  --navH: 64px;          /* altezza reale della bottom nav */
-  --gapUnderNav: 12px;   /* piccolo respiro visivo */
-}
+  /* Layout */
+  --navH: 64px;
+  --gapUnderNav: 12px;
 
-:root{
+  /* Base colors */
   --bg:#0F0F12;
   --txt:#F5F5F7;
   --mut:#A1A1AA;
   --line:rgba(255,255,255,.08);
+
+  /* Shadows / radius */
   --shadow:0 18px 50px rgba(0,0,0,.38);
   --r:18px;
   --r2:26px;
+
+  /* Accents (fresh) */
+  --a1:#00D4FF; /* ocean */
+  --a2:#7C3AED; /* neon */
+  --a3:#22C55E; /* nature */
+  --a4:#FB7185; /* sunset */
 }
 
+/* =========================
+   RESET / BASE
+   ========================= */
 *{box-sizing:border-box}
 html,body{height:100%}
+
 body{
   margin:0;
-  background:var(--bg);
   color:var(--txt);
   font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial;
+
+  /* Atmosfera: fresco, non “nero piatto” */
+  background:
+    radial-gradient(900px 420px at 18% -8%, rgba(0,212,255,.10), transparent 60%),
+    radial-gradient(900px 420px at 88% 6%, rgba(124,58,237,.08), transparent 58%),
+    radial-gradient(900px 520px at 40% 118%, rgba(34,197,94,.06), transparent 60%),
+    var(--bg);
 }
 
-.app{height:100%;display:flex;flex-direction:column}
+/* Container app */
+.app{
+  min-height: 100svh;
+  display:flex;
+  flex-direction:column;
+}
 
+/* =========================
+   TOPBAR
+   ========================= */
 .topbar{
   position: sticky;
   top: 0;
   z-index: 10;
 
-  /* prima: padding:12px 14px; (+ poi aggiungevi safe area) */
   padding: calc(env(safe-area-inset-top) + 6px) 14px 10px;
 
   background: rgba(15,15,18,.72);
   backdrop-filter: saturate(1.2) blur(12px);
   border-bottom: 1px solid var(--line);
+
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -46,22 +75,33 @@ body{
 .iconbtn{
   width:40px;height:40px;border-radius:12px;
   border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
   color:var(--txt);
 }
 
-.main{   flex: 1;   overflow: auto;   -webkit-overflow-scrolling: touch; /* scroll fluido iOS */ }
+/* =========================
+   MAIN / VIEWS
+   ========================= */
+.main{
+  flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .view{
   padding: 14px 14px calc(var(--navH) + var(--gapUnderNav));
 }
 
-
+/* =========================
+   NAV
+   ========================= */
 .nav{
   position: fixed;
   left: 0; right: 0; bottom: 0;
+  display:flex;
+  gap: 6px;
 
   padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-  gap: 6px;
 
   background: rgba(15,15,18,.78);
   backdrop-filter: saturate(1.2) blur(12px);
@@ -71,20 +111,117 @@ body{
 .navbtn{
   flex:1;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.04);
+  background:rgba(255,255,255,.05);
   color:var(--mut);
   border-radius:14px;
   padding:10px 8px;
   font-weight:800;
 }
-.navbtn.on{color:var(--txt);background:rgba(255,255,255,.10)}
+.navbtn.on{
+  color:var(--txt);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+}
 
+/* =========================
+   PAGE / TYPO
+   ========================= */
 .page{max-width:1100px;margin:0 auto}
 .page-head h2{margin:6px 0 4px}
 .muted{color:var(--mut);margin:0}
 
+.h-eyebrow{color:var(--mut);font-weight:800}
+.h-title{
+  margin:6px 0 10px;
+  font-size:34px;
+  letter-spacing:-.4px;
+  text-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
+
+.hero{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+@media (min-width:920px){ .hero{grid-template-columns:1.2fr .8fr;} }
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+  margin-top:12px;
+}
+@media (min-width:920px){ .grid2{grid-template-columns:1fr 1fr;} }
+
+/* =========================
+   COVER (astratta, NO copyright)
+   ========================= */
+.cover{
+  height: 160px;
+  border-radius: 22px;
+  margin: 6px 0 12px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+
+  /* default */
+  background:
+    radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.18), transparent 60%),
+    radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.14), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+
+  animation: coverFloat 10s ease-in-out infinite;
+}
+@keyframes coverFloat{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-2px); }
+}
+
+/* SYDNEY — ocean + neon city */
+.cover[data-city="sydney"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(0,212,255,.40), transparent 60%),
+    radial-gradient(900px 360px at 85% 25%, rgba(124,58,237,.22), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* PERTH — sunset + sand */
+.cover[data-city="perth"]{
+  background:
+    radial-gradient(900px 360px at 20% 18%, rgba(251,113,133,.36), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(245,158,11,.22), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* BRISBANE — river + subtropical */
+.cover[data-city="brisbane"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(34,197,94,.28), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(0,212,255,.20), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* GOLD COAST — teal + surf */
+.cover[data-city="goldcoast"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(0,212,255,.34), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(16,185,129,.20), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* HAMILTON — lagoon + tropical */
+.cover[data-city="hamilton"]{
+  background:
+    radial-gradient(900px 360px at 18% 18%, rgba(16,185,129,.28), transparent 60%),
+    radial-gradient(900px 360px at 82% 22%, rgba(0,212,255,.22), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
+}
+
+/* =========================
+   CARDS / UI
+   ========================= */
 .card{
-  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  background:linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
   border:1px solid var(--line);
   border-radius:var(--r);
   padding:14px;
@@ -96,36 +233,42 @@ body{
 
 .divider{height:1px;background:var(--line);margin:12px 0}
 
-.grid2{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
-  margin-top:12px;
-}
-@media (min-width:920px){ .grid2{grid-template-columns:1fr 1fr;} }
-
-.hero{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
-}
-@media (min-width:920px){ .hero{grid-template-columns:1.2fr .8fr;} }
-
-.h-eyebrow{color:var(--mut);font-weight:800}
-.h-title{margin:6px 0 10px;font-size:34px;letter-spacing:-.4px}
+/* Pills */
 .h-meta{display:flex;flex-wrap:wrap;gap:8px}
 .pill{
   padding:8px 10px;border-radius:999px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.04);
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
   color:var(--txt);
   font-size:12px;font-weight:900;
 }
 
-.wx{display:flex;flex-direction:column;gap:10px}
+/* =========================
+   WEATHER (più disteso)
+   ========================= */
+.wx{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  background:
+    radial-gradient(700px 260px at 18% 0%, rgba(0,212,255,.12), transparent 60%);
+  border-radius:16px;
+  padding:10px;
+}
+
 .wx-main{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.wx-left{display:flex;align-items:center;gap:12px}
+
+.wx-icon{
+  font-size:32px;
+  line-height:1;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
+}
+
 .wx-temp{font-size:44px;font-weight:950;letter-spacing:-1px}
 .wx-desc{color:var(--mut);font-weight:800}
+
 .wx-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .kpi{
   padding:10px;border-radius:14px;
@@ -135,9 +278,13 @@ body{
 .kpi-k{color:var(--mut);font-size:12px;font-weight:800}
 .kpi-v{font-weight:950;margin-top:2px}
 
-.tip-title{font-weight:950}
-.tip-body{color:var(--txt);margin-top:4px}
+#timePill{
+  border-color: color-mix(in oklab, var(--a1) 40%, var(--line));
+}
 
+/* =========================
+   FORMS / BUTTONS
+   ========================= */
 .label{display:block;color:var(--mut);font-weight:900;font-size:12px;margin-bottom:6px}
 
 .select,.input{
@@ -164,6 +311,9 @@ body{
 }
 .btn.ghost{background:rgba(255,255,255,.04);color:var(--mut)}
 
+/* =========================
+   LISTS / MINI
+   ========================= */
 .quick{display:flex;flex-direction:column;gap:10px}
 
 .mini{
@@ -179,6 +329,9 @@ body{
 .list li{margin:8px 0;color:rgba(245,245,247,.92)}
 .list b{color:var(--txt)}
 
+/* =========================
+   ROWLINES (flights/hotels)
+   ========================= */
 .rows{display:flex;flex-direction:column;gap:10px}
 .rowline{
   padding:10px 12px;border-radius:14px;
@@ -189,9 +342,12 @@ body{
 .rowline .v{font-weight:950;margin-top:3px}
 .rowline .s{color:var(--mut);font-size:12px;margin-top:3px}
 
+/* =========================
+   AROUND / MAP / SHEET
+   ========================= */
 .map-wrap{
   position:relative;
-  height: calc(100vh - 58px);
+  height: calc(100svh - 58px); /* fix iOS PWA */
   border-radius: var(--r2);
   overflow:hidden;
   border:1px solid var(--line);
@@ -240,6 +396,7 @@ body{
   background:rgba(255,255,255,.10);
   border-color:rgba(255,255,255,.08);
 }
+
 .filter-row{display:flex;gap:10px}
 .filter-row > *{flex:1}
 
@@ -250,6 +407,8 @@ body{
   flex-direction:column;
   gap:10px;
 }
+
+/* POI cards */
 .poi{
   border:1px solid var(--line);
   background:rgba(255,255,255,.04);
@@ -273,6 +432,9 @@ body{
 .poi-actions .btn{flex:1}
 .poi-actions .btn.ghost{flex:1}
 
+/* =========================
+   ITINERARY
+   ========================= */
 .timeline{display:flex;flex-direction:column;gap:10px}
 .day{
   border:1px solid var(--line);
@@ -294,134 +456,3 @@ body{
 .day-body{margin-top:10px;color:rgba(245,245,247,.94)}
 .day-body ul{margin:8px 0 0;padding-left:18px}
 .day-body li{margin:6px 0;color:rgba(245,245,247,.92)}
-html, body { height: 100%; }
-
-body{
-  margin:0;
-  background:
-    radial-gradient(1200px 500px at 20% -10%, rgba(255,255,255,.06), transparent 60%),
-    #0F0F12;
-  color:var(--txt);
-}
-
-
-.app{
-  min-height: 100svh;
-  display:flex;
-  flex-direction:column;
-
-  /* Togli padding-top e lascia che sia la topbar a gestire l'inset */
-  padding-top: 0;
-
-  /* sotto lo gestiamo con la nav, non qui */
-  padding-bottom: 0;
-}
-.cover{
-  height: 160px;
-  border-radius: 22px;
-  margin: 6px 0 12px;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  background:
-    radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.22), transparent 55%),
-    radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.18), transparent 58%),
-    linear-gradient(180deg, rgba(15,15,18,.18), rgba(15,15,18,.86)),
-    var(--bg);
-  background-position: center;
-  background-size: cover;
-  overflow: hidden;
-}
-.wx-left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.wx-icon{
-  font-size:32px;
-  line-height:1;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
-}
-
-.wx{
-  background:
-    radial-gradient(600px 240px at 20% 0%, rgba(0,212,255,.12), transparent 60%);
-  border-radius:16px;
-  padding:10px;
-}
-
-.pill{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-}
-
-#timePill{
-  border-color: color-mix(in oklab, var(--a1) 40%, var(--line));
-}
-.h-title{
-  text-shadow: 0 10px 30px rgba(0,0,0,.45);
-}
-
-.cover{
-  height: 160px;
-  border-radius: 22px;
-  margin: 6px 0 12px;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  background:
-    radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.18), transparent 60%),
-    radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.14), transparent 58%),
-    linear-gradient(180deg, rgba(15,15,18,.12), rgba(15,15,18,.86));
-}
-/* SYDNEY — ocean + neon city */
-.cover[data-city="sydney"]{
-  background:
-    radial-gradient(900px 360px at 18% 18%, rgba(0,212,255,.38), transparent 60%),
-    radial-gradient(900px 360px at 85% 25%, rgba(124,58,237,.20), transparent 58%),
-    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
-}
-
-/* PERTH — sunset + sand */
-.cover[data-city="perth"]{
-  background:
-    radial-gradient(900px 360px at 20% 18%, rgba(251,113,133,.34), transparent 60%),
-    radial-gradient(900px 360px at 82% 22%, rgba(245,158,11,.20), transparent 58%),
-    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
-}
-
-/* BRISBANE — river + subtropical */
-.cover[data-city="brisbane"]{
-  background:
-    radial-gradient(900px 360px at 18% 18%, rgba(34,197,94,.26), transparent 60%),
-    radial-gradient(900px 360px at 82% 22%, rgba(0,212,255,.20), transparent 58%),
-    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
-}
-
-/* GOLD COAST — teal + surf */
-.cover[data-city="goldcoast"]{
-  background:
-    radial-gradient(900px 360px at 18% 18%, rgba(0,212,255,.34), transparent 60%),
-    radial-gradient(900px 360px at 82% 22%, rgba(16,185,129,.18), transparent 58%),
-    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
-}
-
-/* HAMILTON — tropical + lagoon */
-.cover[data-city="hamilton"]{
-  background:
-    radial-gradient(900px 360px at 18% 18%, rgba(16,185,129,.26), transparent 60%),
-    radial-gradient(900px 360px at 82% 22%, rgba(0,212,255,.22), transparent 58%),
-    linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
-}
-
-.cover{
-  background-size: 100% 100%;
-  animation: coverFloat 10s ease-in-out infinite;
-}
-@keyframes coverFloat{
-  0%,100%{ transform: translateY(0); }
-  50%{ transform: translateY(-2px); }
-}
-
-
-
