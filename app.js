@@ -35,21 +35,22 @@ function setCoverForBase(baseKey){
   const el = document.getElementById("cityCover");
   if(!el) return;
 
-  const url = COVERS[baseKey];
-  if(url){
-    el.style.backgroundImage =
-      `radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.22), transparent 55%),
-       radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.18), transparent 58%),
-       linear-gradient(180deg, rgba(15,15,18,.18), rgba(15,15,18,.86)),
-       url("${url}")`;
-  }else{
-    // fallback solo gradient (comunque bello)
-    el.style.backgroundImage =
-      `radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.22), transparent 55%),
-       radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.18), transparent 58%),
-       linear-gradient(180deg, rgba(15,15,18,.18), rgba(15,15,18,.86))`;
+  // default se GPS o sconosciuto
+  let city = "sydney";
+
+  if(baseKey && baseKey.startsWith("hotel_")){
+    city = baseKey.replace("hotel_", "");
+  } else if(baseKey === "gps"){
+    // se vuoi: deduci dal timezone quando disponibile
+    const tz = state.baseCoord?.tz;
+    if(tz === "Australia/Perth") city = "perth";
+    else if(tz === "Australia/Brisbane") city = "goldcoast"; // (QLD)
+    else city = "sydney";
   }
+
+  el.dataset.city = city;
 }
+
 
 function init() {
   wireNav();
@@ -168,6 +169,8 @@ if(baseKey === "gps"){
   $("#wherePill").textContent = "Dove: GPS";
   await getGPSBase();
   setCoverForBase(coverKeyFromTZ(state.baseCoord?.tz)); // ✅ QUI
+  await getGPSBase();
+setCoverForBase("gps");
 }
  else {
     const b = BASES[baseKey];
@@ -611,5 +614,6 @@ function coverKeyFromTZ(tz){
   // default East (Sydney)
   return "hotel_sydney";
 }
+
 
 
