@@ -414,5 +414,14 @@ body{
     linear-gradient(180deg, rgba(15,15,18,.10), rgba(15,15,18,.88));
 }
 
+.cover{
+  background-size: 100% 100%;
+  animation: coverFloat 10s ease-in-out infinite;
+}
+@keyframes coverFloat{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-2px); }
+}
+
 
 
