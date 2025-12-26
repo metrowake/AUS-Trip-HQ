@@ -316,5 +316,21 @@ body{
   /* sotto lo gestiamo con la nav, non qui */
   padding-bottom: 0;
 }
+.cover{
+  height: 160px;
+  border-radius: 22px;
+  margin: 6px 0 12px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background:
+    radial-gradient(900px 320px at 15% 10%, rgba(0,212,255,.22), transparent 55%),
+    radial-gradient(900px 320px at 85% 20%, rgba(124,58,237,.18), transparent 58%),
+    linear-gradient(180deg, rgba(15,15,18,.18), rgba(15,15,18,.86)),
+    var(--bg);
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+}
+
 
 
